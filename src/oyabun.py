@@ -174,6 +174,9 @@ class DiscordBot:
                 await discordbot.help(message)
 
     async def new(self, message):
+        # 既に起動している場合は一度終了する
+        if self.isRunning:
+            await self.end(message)
         # メッセージ送り主のいるボイスチャンネルを探す
         vcs = message.guild.voice_channels
         author = message.author
@@ -188,7 +191,7 @@ class DiscordBot:
                     targetvc = v
                     break
         if targetvc == None:
-            message.channel.send("ボイスチャンネルに参加してからコマンドを実行してください")
+            await message.channel.send("ボイスチャンネルに参加してからコマンドを実行してください")
             return
         if os.path.isfile(baseDir + "/nameConverter.json"):
             with open(baseDir +"/nameConverter.json", "r") as f:

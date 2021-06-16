@@ -55,6 +55,9 @@ class DiscordBot:
                 await discordbot.end(message)
 
     async def new(self, message):
+        # 既に起動している場合は一度終了する
+        if self.isRunning:
+            await self.end(message)
         # メッセージ送り主のいるボイスチャンネルを探す
         vcs = message.guild.voice_channels
         author = message.author
@@ -78,6 +81,9 @@ class DiscordBot:
     async def end(self, message):
         if self.msg:
             await self.msg.delete()
+            self.vc = None
+            self.msg = None
+            self.isRunning = False
 
     async def setVoiceStatus(self,voicestatus):
         if self.isRunning and self.vc:
