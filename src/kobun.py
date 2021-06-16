@@ -81,6 +81,9 @@ class DiscordBot:
     async def end(self, message):
         if self.msg:
             await self.msg.delete()
+            self.vc = None
+            self.msg = None
+            self.isRunning = False
 
     async def setVoiceStatus(self,voicestatus):
         if self.isRunning and self.vc:
