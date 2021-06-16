@@ -203,6 +203,9 @@ class DiscordBot:
         embed = discord.Embed(title="MuteBot接続待ち", description="クライアント接続待ち", color=0xff0000)
         embed.set_thumbnail(url=self.thumbnail)
         self.msg = await message.channel.send(embed=embed)
+        embed = discord.Embed(title="GameSettings", description="クライアント接続待ち", color=0x0000ff)
+        embed.set_thumbnail(url=self.thumbnail)
+        self.optionsMsg = await message.channel.send(embed=embed)
         self.vc = targetvc
         self.isRunning = True
 
@@ -392,14 +395,17 @@ class DiscordBot:
         if self.msg == None:
             return
 
-        dec = ""
-        for line in optionsString:
-            match = re.match(r' 0%', line)
-            if match:
-                continue
-            dec += re.sub(r'<[^>]*>', "")
+        print("setOptions")
+        optionsString = re.sub(r'<[^>]*>', "", optionsString)
+        #des = "現在の設定値\n"
+        #for line in optionsString:
+        #    ret = re.search(r": 0%", line)
+        #    if not ret:
+        #        des += line
+        #print("des")
+        #print(des)
 
-        embed = discord.Embed(title="GameSettings", description=dec, color=0x0000FF)
+        embed = discord.Embed(title="GameSettings", description=optionsString, color=0x0000FF)
         if self.optionsMsg == None:
             self.optionsMsg = await self.msg.channel.send(embed=embed)
         else:
@@ -547,6 +553,7 @@ def receiveMsg():
             return Response("{}", status=200, mimetype='application/json')
         elif 'optionsString' in data:
             function = asyncio.run_coroutine_threadsafe(db.setOptions(data['optionsString']), client.loop)
+            function.result()
             return Response("{}", status=200, mimetype='application/json')
         else:
             return Response("{}", status=400, mimetype='application/json')
