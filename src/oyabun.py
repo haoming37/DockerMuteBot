@@ -111,6 +111,7 @@ class DiscordBot:
     client = discord.Client(intents=Intents)
     vc = None
     msg = None
+    optionsMsg = None
     nameConverter = {}
     colorConverter = {}
     players = []
@@ -210,9 +211,13 @@ class DiscordBot:
         await self.unmuteAll()
         # サーバー起動のメッセージを削除する
         if self.isRunning:
-            await self.msg.delete()
+            if self.msg:
+                await self.msg.delete()
+            if self.optionsMsg:
+                await self.optionsMsg.delete()
             self.vc = None
             self.msg = None
+            self.optionsMsg = None
             self.isRunning = False
             with open(baseDir +"/nameConverter.json", "w") as f:
                 json.dump(self.nameConverter,f)
@@ -382,6 +387,16 @@ class DiscordBot:
         await self.unmuteAll()
         # Msg部分を作成
         await self.updateMessage(players)
+    
+    async def setOptions(self, optionsString):
+        if self.msg == None:
+            return
+
+        embed = discord.Embed(title="GameSettings", description=optionsString, color=0x0000FF)
+        if self.optionsMsg == None:
+            self.optionsMsg = await self.msg.channel.send(embed=embed)
+        else:
+            await self.optionsMsg.edit(embed=embed)
 
 
     async def updateMessage(self, players):
@@ -523,9 +538,10 @@ def receiveMsg():
                 elif data["gameStatus"] == EventId.Unknown.value:
                     pass
             return Response("{}", status=200, mimetype='application/json')
+        elif 'optionsString' in data:
+            function = asyncio.run_coroutine_threadsafe(db.setOptions(data['optionsString']), client.loop)
         else:
             return Response("{}", status=400, mimetype='application/json')
-
 
 
 # main関数
