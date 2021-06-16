@@ -540,6 +540,7 @@ def receiveMsg():
             return Response("{}", status=200, mimetype='application/json')
         elif 'optionsString' in data:
             function = asyncio.run_coroutine_threadsafe(db.setOptions(data['optionsString']), client.loop)
+            return Response("{}", status=200, mimetype='application/json')
         else:
             return Response("{}", status=400, mimetype='application/json')
 
