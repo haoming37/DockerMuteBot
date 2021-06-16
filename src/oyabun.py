@@ -392,7 +392,14 @@ class DiscordBot:
         if self.msg == None:
             return
 
-        embed = discord.Embed(title="GameSettings", description=optionsString, color=0x0000FF)
+        dec = ""
+        for line in optionsString:
+            match = re.match(r' 0%', line)
+            if match:
+                continue
+            line += re.sub(r'<[^>]*>', "")
+
+        embed = discord.Embed(title="GameSettings", description=dec, color=0x0000FF)
         if self.optionsMsg == None:
             self.optionsMsg = await self.msg.channel.send(embed=embed)
         else:
