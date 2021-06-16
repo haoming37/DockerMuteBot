@@ -397,7 +397,7 @@ class DiscordBot:
             match = re.match(r' 0%', line)
             if match:
                 continue
-            line += re.sub(r'<[^>]*>', "")
+            dec += re.sub(r'<[^>]*>', "")
 
         embed = discord.Embed(title="GameSettings", description=dec, color=0x0000FF)
         if self.optionsMsg == None:
